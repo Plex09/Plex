@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plex — My Collection</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230c0c0c'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='%23c8a96e'%3EP%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── LOADING SPLASH ── -->
+  <div id="splash">
+    <div class="splash-grain"></div>
+    <span class="splash-name">Plex</span>
+  </div>
+
+  <!-- ── GATE ── -->
+  <div id="gate" class="hidden">
+    <div class="gate-bg">
+      <img class="gate-bg-img" src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1920,q_auto,f_auto/v1777347375/ChatGPT_Image_Apr_27_2026_06_26_59_PM_osiaid.png" alt="" draggable="false" />
+      <div class="gate-grain"></div>
+    </div>
+    <div class="gate-content">
+      <p class="gate-eyebrow">Private Exhibition</p>
+      <div class="gate-clock" id="gateClock"></div>
+      <h1 class="gate-title">Plex</h1>
+      <p class="gate-sub">This collection is private.<br />Enter the access code to continue.</p>
+      <form class="gate-form" id="gateForm" autocomplete="off">
+        <div class="gate-input-wrap">
+          <input type="password" id="passwordInput" class="gate-input" placeholder="Access code" maxlength="32" spellcheck="false" autofocus />
+          <button type="submit" class="gate-btn" aria-label="Enter">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+        <p class="gate-error" id="gateError">Incorrect code. Please try again.</p>
+        <p class="gate-attempts" id="gateAttempts"></p>
+      </form>
+      <p class="gate-credit">© 2025 Plex's Art</p>
+    </div>
+  </div>
+
+  <!-- ── GALLERY ── -->
+  <div id="gallery" class="hidden">
+
+    <header class="gallery-header" id="galleryHeader">
+      <div class="header-left">
+        <span class="header-name">Plex</span>
+      </div>
+      <div class="header-right">
+        <span class="photo-count-badge">16 Photos</span>
+        <!-- Search -->
+        <div class="search-wrap" id="searchWrap">
+          <input type="text" id="searchInput" class="search-input" placeholder="001" maxlength="3" />
+        </div>
+        <!-- Gap slider -->
+        <div class="gap-wrap" title="Adjust spacing">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="18"/></svg>
+          <input type="range" id="gapSlider" min="0" max="40" value="12" class="gap-slider" />
+        </div>
+        <!-- Sort -->
+        <button class="header-btn" id="sortBtn" title="Sort by date">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><polyline points="3 6 4 7 6 5"/><polyline points="3 12 4 13 6 11"/><polyline points="3 18 4 19 6 17"/></svg>
+          <span id="sortLabel">Newest</span>
+        </button>
+        <!-- Favorites -->
+        <button class="header-btn" id="favFilterBtn" title="Show favorites">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Favorites
+        </button>
+        <!-- Shuffle -->
+        <button class="header-btn" id="shuffleBtn" title="Shuffle photos">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+          Shuffle
+        </button>
+        <!-- Mirror -->
+        <button class="header-btn" id="mirrorBtn" title="Mirror gallery">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="3" x2="12" y2="21"/><path d="M5 7l-2 5 2 5"/><path d="M19 7l2 5-2 5"/></svg>
+          Mirror
+        </button>
+
+        <!-- Theme switcher -->
+        <div class="theme-switcher" id="themeSwitcher" title="Change theme">
+          <button class="theme-btn active" data-theme="dark" aria-label="Dark theme"></button>
+          <button class="theme-btn" data-theme="sepia" aria-label="Sepia theme"></button>
+          <button class="theme-btn" data-theme="cold" aria-label="Cold theme"></button>
+        </div>
+
+        <!-- Layout toggle -->
+        <button class="header-btn" id="layoutBtn" title="Toggle layout">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          <span id="layoutLabel">Masonry</span>
+        </button>
+
+        <button class="header-lock" id="lockBtn" title="Lock gallery">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Lock
+        </button>
+      </div>
+    </header>
+
+    <div class="gallery-intro">
+      <p class="intro-eyebrow">2024 — 2025</p>
+  
+    </div>
+
+    <!-- Masonry / Grid -->
+    <main class="masonry" id="masonryGrid">
+
+      <div class="photo-item" data-title="" data-date="2025">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777347375/ChatGPT_Image_Apr_27_2026_06_26_59_PM_osiaid.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">001</span>
+            <button class="heart-btn" data-id="001" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2025">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777347373/ChatGPT_Image_Apr_27_2026_06_05_53_PM_zoq93q.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">002</span>
+            <button class="heart-btn" data-id="002" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2025">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777349002/ChatGPT_Image_Apr_28_2026_05_50_45_AM_mj96b5.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">003</span>
+            <button class="heart-btn" data-id="003" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2025">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777347371/ChatGPT_Image_Apr_27_2026_06_33_19_PM_vrguys.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">004</span>
+            <button class="heart-btn" data-id="004" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777429097/ChatGPT_Image_Apr_29_2026_04_05_32_AM_hp6etz.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">005</span>
+            <button class="heart-btn" data-id="005" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777429093/ChatGPT_Image_Apr_29_2026_04_11_04_A_cnxqyr.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">006</span>
+            <button class="heart-btn" data-id="006" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777429090/ChatGPT_Image_Apr_29_2026_04_03_07_AM_mkjr3r.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">007</span>
+            <button class="heart-btn" data-id="007" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777429088/ChatGPT_Image_Apr_29_2026_04_01_33_AM_ehcyfa.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">008</span>
+            <button class="heart-btn" data-id="008" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777546711/ChatGPT_Image_Apr_30_2026_12_45_06_PM_h9plro.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">009</span>
+            <button class="heart-btn" data-id="009" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777546710/ChatGPT_Image_Apr_30_2026_12_47_50_PM_o97h6z.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">010</span>
+            <button class="heart-btn" data-id="010" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777700895/ChatGPT_Image_May_2_2026_07_20_26_AM_q97uup.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">011</span>
+            <button class="heart-btn" data-id="011" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777700888/May_2_2026_07_12_25_AM_vmpcga.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">012</span>
+            <button class="heart-btn" data-id="012" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777700894/ChatGPT_Image_May_2_2026_07_40_39_AM_imr3bo.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">013</span>
+            <button class="heart-btn" data-id="013" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777700893/ChatGPT_Image_May_2_2026_07_10_53_AM_dnrlzx.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">014</span>
+            <button class="heart-btn" data-id="014" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777700891/ChatGPT_Image_May_2_2026_06_57_59_AM_oli8o5.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">015</span>
+            <button class="heart-btn" data-id="015" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-title="" data-date="2026">
+        <div class="photo-inner">
+          <img src="https://res.cloudinary.com/dw7beorzz/image/upload/w_1200,q_auto,f_auto/v1777700889/May_2_2026_07_12_20_AM_wpgwsy.png" alt="" loading="lazy" />
+          <div class="photo-overlay">
+            <span class="photo-num">016</span>
+            <button class="heart-btn" data-id="016" aria-label="Favorite"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Color palette strip -->
+    <div class="palette-strip" id="paletteStrip"></div>
+
+    <!-- Photographer quote -->
+    <div class="quote-section">
+      <blockquote class="quote-text">"Every frame is a decision. Every shadow, intentional."</blockquote>
+      <cite class="quote-author">— Plex</cite>
+    </div>
+
+    <!-- Footer -->
+    <footer class="gallery-footer">
+      <div class="footer-inner">
+        <p class="footer-copy">© 2026 Plex's Art. All rights reserved.</p>
+        <p class="footer-updated" id="footerUpdated"></p>
+        <p class="footer-views" id="footerViews"></p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ── LIGHTBOX ── -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
+    <div class="lb-backdrop" id="lbBackdrop"></div>
+
+    <button class="lb-close" id="lbClose" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+
+    <div class="lb-stage" id="lbStage">
+      <img src="" alt="" id="lbImg" />
+    </div>
+
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Next">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+
+    <!-- Caption -->
+    <div class="lb-caption">
+      <span class="lb-caption-date" id="lbCaptionDate"></span>
+    </div>
+
+    <!-- Film strip -->
+    <div class="lb-filmstrip" id="lbFilmstrip"></div>
+
+    <!-- Controls -->
+    <div class="lb-controls">
+      <button class="lb-ctrl-btn" id="lbZoomBtn" title="Zoom (Z)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      </button>
+      <button class="lb-ctrl-btn" id="lbFullscreen" title="Fullscreen (F)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      </button>
+      <button class="lb-ctrl-btn" id="lbSlideshow" title="Slideshow (S)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
+      <button class="lb-ctrl-btn" id="lbDownload" title="Download HD">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+    </div>
+
+    <!-- Keyboard hints -->
+    <div class="lb-hints" id="lbHints">
+      <span>← → Navigate</span>
+      <span>Z Zoom</span>
+      <span>F Fullscreen</span>
+      <span>S Slideshow</span>
+      <span>Esc Close</span>
+    </div>
+
+    <div class="lb-counter" id="lbCounter">1 / 4</div>
+  </div>
+
+  <!-- Easter egg overlay -->
+  <div class="easter-egg" id="easterEgg">
+    <div class="easter-content">
+      <span class="easter-emoji">🎞️</span>
+      <p>You found the secret.</p>
+    </div>
+  </div>
+
+  <!-- Ripple container -->
+  <div id="rippleContainer"></div>
+
+  <!-- Background Music -->
+  <audio id="bgMusic" src="https://res.cloudinary.com/dw7beorzz/video/upload/v1777552737/BESO_spotdown.org_q3oedx.mp3" loop preload="auto"></audio>
+
+  <!-- Shutter sound -->
+  <audio id="shutterSound" preload="auto">
+    <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_8b55e8e5e5.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- Curtain -->
+  <div class="curtain" id="curtain"></div>
+
+  <!-- Pull to refresh -->
+  <div class="pull-indicator" id="pullIndicator">Pull to lock</div>
+
+  <!-- Watermark -->
+  <div class="watermark" id="watermark">© 2026 Plex's Art</div>
+
+  <!-- Idle warning toast -->
+  <div class="idle-toast" id="idleToast">
+    Still there? Locking in <span id="idleCountdown">30</span>s
+    <button id="idleStay">Stay</button>
+  </div>
+
+  <!-- Scroll to top -->
+  <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+  
+  <script src="script.js"></script>
+</body>
+</html>
